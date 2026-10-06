@@ -50,8 +50,9 @@ param natGatewayName string = 'LocalBox-NatGateway'
 @allowed([
   'Standard_E32s_v5'
   'Standard_E32s_v6'
+  'Standard_E32as_v6'
 ])
-param vmSize string = 'Standard_E32s_v6'
+param vmSize string = 'Standard_E32as_v6'
 
 @description('Option to enable spot pricing for the LocalBox Client VM')
 param enableAzureSpotPricing bool = false
@@ -75,6 +76,7 @@ param tags object = {
   'canadacentral'
   'japaneast'
   'centralindia'
+  'usgovvirginia'
 ])
 param azureLocalInstanceLocation string = 'australiaeast'
 

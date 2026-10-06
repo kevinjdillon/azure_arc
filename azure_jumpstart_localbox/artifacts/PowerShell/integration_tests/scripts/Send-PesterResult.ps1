@@ -14,7 +14,7 @@ $logFilePath = 'C:\LocalBox\Logs\New-LocalBoxCluster.log'
 
 Write-Output "Adding Storage Blob Data Contributor role assignment to Managed Identity for allowing upload of Pester test results to Azure Storage"
 
-$null = Connect-AzAccount -Identity -Scope Process
+$null = Connect-AzAccount -Identity -Environment AzureUSGovernment -Scope Process
 
 Write-Output 'Wait for Azure CLI to become available (installed by WinGet)'
 

@@ -153,7 +153,7 @@ Import-Module Az.Accounts -RequiredVersion 5.3.1 -Force
 Import-Module Az.KeyVault -RequiredVersion 6.4.1 -Force
 Import-Module Az.Resources -RequiredVersion 9.0.0 -Force
 
-Connect-AzAccount -Identity
+Connect-AzAccount -Identity -Environment AzureUSGovernment
 
 $DeploymentProgressString = "Started bootstrap-script..."
 
