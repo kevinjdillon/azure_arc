@@ -21,6 +21,9 @@ $tenantId = (Get-AzContext).tenant.id
 Write-Host "Setting Azure context with subscription id $env:AZURE_SUBSCRIPTION_ID and tenant id $tenantId..."
 $context = Set-AzContext -SubscriptionId $env:AZURE_SUBSCRIPTION_ID -ErrorAction Stop
 
+# Ensure Azure CLI targets Azure Government
+az cloud set --name AzureUSGovernment
+
 # Check if Azure CLI is authenticated to the same tenant as Azure PowerShell
 $azCliTenantId = (az account show --query "tenantId" -o tsv) 2>&1
 if ($azCliTenantId -ne $tenantId) {
