@@ -189,6 +189,29 @@ foreach ($module in $modules) {
     Install-PSResource -Name $module -Scope AllUsers -Quiet -AcceptLicense -TrustRepository
 }
 
+# Azure Government: Azure.Arc.Jumpstart.LocalBox hard-codes -Cloud "AzureCloud" when Arc-initializing the nested Azure Local nodes
+# (Set-AzLocalDeployPrereqs). Patch the installed module so the nodes are initialized against Azure Government.
+Write-Host "Patching Azure.Arc.Jumpstart.LocalBox module for Azure Government."
+$localBoxModule = Get-Module -ListAvailable -Name Azure.Arc.Jumpstart.LocalBox | Sort-Object Version -Descending | Select-Object -First 1
+if (-not $localBoxModule) {
+    Write-Warning "Azure.Arc.Jumpstart.LocalBox module not found. Skipping Azure Government patch."
+}
+else {
+    $cloudPatched = $false
+    foreach ($moduleFile in (Get-ChildItem -Path $localBoxModule.ModuleBase -Include *.psm1, *.ps1 -Recurse)) {
+        $moduleContent = Get-Content -Path $moduleFile.FullName -Raw -Encoding UTF8
+        if ($moduleContent -match '-Cloud\s+"AzureCloud"') {
+            ($moduleContent -replace '-Cloud\s+"AzureCloud"', '-Cloud "AzureUSGovernment"') | Set-Content -Path $moduleFile.FullName -Encoding UTF8 -NoNewline
+            Write-Host "Patched cloud setting in $($moduleFile.FullName)"
+            $cloudPatched = $true
+        }
+    }
+    if (-not $cloudPatched) {
+        Write-Warning "No -Cloud ""AzureCloud"" setting found in Azure.Arc.Jumpstart.LocalBox $($localBoxModule.Version). Verify the cloud used for Arc initialization."
+    }
+}
+
+
 # Disabling Windows Server Manager Scheduled Task
 Write-Host "Disabling Windows Server Manager scheduled task."
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask
