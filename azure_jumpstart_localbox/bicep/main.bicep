@@ -105,6 +105,7 @@ module storageAccountDeployment 'mgmt/storageAccount.bicep' = {
   params: {
     location: azureLocalInstanceLocation
     resourceTags: resourceTags
+    allowedSubnetId: networkDeployment.outputs.subnetId
   }
 }
 

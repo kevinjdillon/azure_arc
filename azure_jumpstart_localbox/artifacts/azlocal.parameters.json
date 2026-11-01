@@ -14,6 +14,9 @@
         "diagnosticStorageAccountName": {
             "value": "diagnosticStorageAccountName-staging"
         },
+        "allowedSubnetId": {
+            "value": "allowedSubnetId-staging"
+        },
         "logsRetentionInDays": {
             "value": 30
         },

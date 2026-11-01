@@ -52,6 +52,14 @@ resource arcVirtualNetwork 'Microsoft.Network/virtualNetworks@2024-07-01' = {
             id: natGateway.id
           } : null
           defaultOutboundAccess: false
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Storage'
+            }
+            {
+              service: 'Microsoft.KeyVault'
+            }
+          ]
         }
       }
       {
@@ -77,6 +85,14 @@ resource arcVirtualNetwork 'Microsoft.Network/virtualNetworks@2024-07-01' = {
             id: natGateway.id
           } : null
           defaultOutboundAccess: false
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Storage'
+            }
+            {
+              service: 'Microsoft.KeyVault'
+            }
+          ]
         }
       }
     ]

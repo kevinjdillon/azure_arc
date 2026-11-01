@@ -64,6 +64,17 @@ $storageBIPs += " ]"
 # Create diagnostics storage account name
 $diagnosticsStorageName = "localboxdiagsa$guid"
 
+# Resolve the client VM subnet so the witness storage account and Key Vault can be restricted to selected networks
+$allowedSubnetId = ""
+$localBoxVnet = Get-AzResource -ResourceGroupName $env:resourceGroup -ResourceType 'Microsoft.Network/virtualNetworks' -ExpandProperties | Select-Object -First 1
+if ($localBoxVnet) {
+    $localBoxSubnet = $localBoxVnet.Properties.subnets | Where-Object { $_.name -ne 'AzureBastionSubnet' } | Select-Object -First 1
+    if ($localBoxSubnet) { $allowedSubnetId = $localBoxSubnet.id }
+}
+if ([string]::IsNullOrEmpty($allowedSubnetId)) {
+    Write-Warning "Could not resolve the client VM subnet. The witness storage account and Key Vault will not be network restricted."
+}
+
 # Replace placeholder values in ARM template with real values
 $AzLocalParams = "$env:LocalBoxDir\azlocal.parameters.json"
 (Get-Content -Path $AzLocalParams) -replace 'clusterName-staging', $LocalBoxConfig.ClusterName | Set-Content -Path $AzLocalParams
@@ -85,6 +96,7 @@ $AzLocalParams = "$env:LocalBoxDir\azlocal.parameters.json"
 (Get-Content -Path $AzLocalParams) -replace 'physicalNodesSettings-staging', $physicalNodesSettings | Set-Content -Path $AzLocalParams
 (Get-Content -Path $AzLocalParams) -replace 'ClusterWitnessStorageAccountName-staging', $env:stagingStorageAccountName | Set-Content -Path $AzLocalParams
 (Get-Content -Path $AzLocalParams) -replace 'diagnosticStorageAccountName-staging', $diagnosticsStorageName | Set-Content -Path $AzLocalParams
+(Get-Content -Path $AzLocalParams) -replace 'allowedSubnetId-staging', $allowedSubnetId | Set-Content -Path $AzLocalParams
 (Get-Content -Path $AzLocalParams) -replace 'storageNicAVLAN-staging', $LocalBoxConfig.StorageAVLAN | Set-Content -Path $AzLocalParams
 (Get-Content -Path $AzLocalParams) -replace 'storageNicBVLAN-staging', $LocalBoxConfig.StorageBVLAN | Set-Content -Path $AzLocalParams
 (Get-Content -Path $AzLocalParams) -replace 'customLocation-staging', $LocalBoxConfig.rbCustomLocationName | Set-Content -Path $AzLocalParams

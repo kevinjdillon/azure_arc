@@ -31,6 +31,13 @@
       "type": "int",
       "defaultValue": 30
     },
+    "allowedSubnetId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Id of the subnet allowed to access the witness storage account and Key Vault. The subnet needs Microsoft.Storage and Microsoft.KeyVault service endpoints. When empty, no network restrictions are applied."
+      }
+    },
     "diagnosticStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -476,6 +483,8 @@
     "domainAdminSecretName": "[concat( parameters('clusterName'), '-', 'AzureStackLCMUserCredential')]",
     "storageWitnessNameVar": "WitnessStorageKey",
     "secretsLocationVar": "[concat('https://',parameters('keyVaultName'), environment().suffixes.keyvaultDns)]",
+    "storageNetworkAclsVar": "[if(empty(parameters('allowedSubnetId')), createObject('defaultAction', 'Allow', 'bypass', 'AzureServices'), createObject('defaultAction', 'Deny', 'bypass', 'AzureServices', 'virtualNetworkRules', createArray(createObject('id', parameters('allowedSubnetId'), 'action', 'Allow'))))]",
+    "keyVaultNetworkAclsVar": "[if(empty(parameters('allowedSubnetId')), createObject('defaultAction', 'Allow', 'bypass', 'AzureServices'), createObject('defaultAction', 'Deny', 'bypass', 'AzureServices', 'virtualNetworkRules', createArray(createObject('id', parameters('allowedSubnetId')))))]",
     "witnessTypeVar": "[if(equals(parameters('witnessType'), 'No Witness'), '','Cloud')]",
     "clusterWitnessStorageAccountNameVar": "[if(equals(parameters('witnessType'), 'No Witness'), '', parameters('clusterWitnessStorageAccountName'))]",
     "AzureServiceEndpointVar": "[if(equals(parameters('witnessType'), 'No Witness'), '', environment().suffixes.storage)]",
@@ -530,7 +539,9 @@
       "kind": "StorageV2",
       "properties": {
         "supportsHttpsTrafficOnly": true,
-         "minimumTlsVersion": "TLS1_2"
+         "minimumTlsVersion": "TLS1_2",
+        "publicNetworkAccess": "Enabled",
+        "networkAcls": "[variables('storageNetworkAclsVar')]"
       }
     },
     "hcirproleassignment": {
@@ -756,6 +767,7 @@
         "softDeleteRetentionInDays": "[parameters('softDeleteRetentionDays')]",
         "enableRbacAuthorization": true,
         "publicNetworkAccess": "Enabled",
+        "networkAcls": "[variables('keyVaultNetworkAclsVar')]",
         "accessPolicies": [],
         "tenantId": "[parameters('tenantId')]",
         "sku": {

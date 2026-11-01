@@ -85,6 +85,7 @@ module storageAccountDeployment 'mgmt/storageAccount.bicep' = {
   scope: rg
   params: {
     location: location
+    allowedSubnetId: networkDeployment.outputs.subnetId
   }
 }
 
