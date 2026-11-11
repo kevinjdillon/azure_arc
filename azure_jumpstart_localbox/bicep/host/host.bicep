@@ -27,6 +27,7 @@ param location string = resourceGroup().location
 @description('Region to register Azure Local instance in. This is the region where the Azure Local instance resources will be created. The region must be one of the supported Azure Local regions.')
 @allowed([
   'usgovarizona'
+  'usgovvirginia'
 ])
 param azureLocalInstanceLocation string = 'usgovarizona'
 
@@ -148,7 +149,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
         sku: windowsOSVersion
-        version: 'latest'
+        version: '26100.33648.261011'
       }
       dataDisks: [
         {
