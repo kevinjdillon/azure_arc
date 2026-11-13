@@ -21,7 +21,7 @@ param rdpPort = '3389'
 param autoDeployClusterResource = false
 param autoUpgradeClusterResource = false
 param vmAutologon = true
-param vmSize = 'Standard_E32as_v6'
+param vmSize = location == 'usgovvirginia' ? 'Standard_E32as_v6' : 'Standard_E32s_v5'
 param enableAzureSpotPricing = false
 param governResourceTags = true
 param tags = {

@@ -149,7 +149,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
         sku: windowsOSVersion
-        version: '26100.33648.261011'
+        version: 'latest'
       }
       dataDisks: [
         {
